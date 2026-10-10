@@ -261,7 +261,7 @@ export default function AdminDashboard() {
                 <div key={idx} className="p-6 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                   {editingIndex === idx ? (
                     <div className="space-y-4">
-                      <div className="flex gap-4">
+                      <div className="flex flex-col md:flex-row gap-4">
                         <div className="flex-1">
                           <label className="block text-xs font-bold text-gray-500 mb-1">Question Text</label>
                           <textarea 
@@ -271,12 +271,12 @@ export default function AdminDashboard() {
                             rows="2"
                           />
                         </div>
-                        <div>
+                        <div className="w-full md:w-auto">
                           <label className="block text-xs font-bold text-gray-500 mb-1">Difficulty</label>
                           <select 
                             value={editForm.difficulty}
                             onChange={(e) => setEditForm({...editForm, difficulty: e.target.value})}
-                            className="p-2 border rounded dark:bg-gray-900 dark:border-gray-600 dark:text-white h-10"
+                            className="w-full md:w-auto p-2 border rounded dark:bg-gray-900 dark:border-gray-600 dark:text-white h-10"
                           >
                             <option value="Easy">Easy</option>
                             <option value="Medium">Medium</option>
@@ -286,7 +286,7 @@ export default function AdminDashboard() {
                       </div>
 
                       {q.type === 'MCQ' && (
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div>
                             <label className="block text-xs font-bold text-gray-500 mb-1">Options</label>
                             {editForm.options.map((opt, i) => (

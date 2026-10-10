@@ -271,30 +271,30 @@ export default function TestScreen({ params }) {
   return (
     <div ref={containerRef} className="bg-white dark:bg-gray-900 h-screen w-full flex flex-col overflow-hidden fixed inset-0 z-50">
       {/* Test Header */}
-      <div className="bg-gray-900 dark:bg-black text-white p-4 flex justify-between items-center shrink-0 border-b border-gray-800">
-        <div className="font-bold">SDE Test - {testData.questions.length} Questions</div>
-        <div className="text-red-400 font-mono text-xl">{formatTime(timeLeft)}</div>
-        <div className="flex items-center gap-4">
-          <div className="text-sm">Warnings: <span className="text-red-400 font-bold">{warnings}</span></div>
-          <button onClick={handleSubmitTest} className="bg-red-600 px-4 py-1 rounded text-sm hover:bg-red-700 font-bold transition-colors">
+      <div className="bg-gray-900 dark:bg-black text-white p-3 md:p-4 flex flex-col sm:flex-row justify-between items-center shrink-0 border-b border-gray-800 gap-2 sm:gap-0">
+        <div className="font-bold text-sm md:text-base hidden sm:block">SDE Test - {testData.questions.length} Qs</div>
+        <div className="text-red-400 font-mono text-lg md:text-xl font-bold">{formatTime(timeLeft)}</div>
+        <div className="flex items-center gap-3 md:gap-4 w-full sm:w-auto justify-between sm:justify-end">
+          <div className="text-xs md:text-sm bg-gray-800 px-2 py-1 rounded">Warnings: <span className="text-red-400 font-bold">{warnings}</span></div>
+          <button onClick={handleSubmitTest} className="bg-red-600 px-3 py-1.5 md:px-4 md:py-1 rounded text-xs md:text-sm hover:bg-red-700 font-bold transition-colors shadow-sm">
             Submit Test
           </button>
         </div>
       </div>
 
       {/* Test Body */}
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
         {/* Left pane: Question & Navigation */}
-        <div className="w-1/2 p-6 flex flex-col border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+        <div className={`w-full md:w-1/2 ${currentQuestion.type === 'CODE' ? 'h-1/2' : 'h-full'} md:h-full p-4 md:p-6 flex flex-col border-b md:border-b-0 md:border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shrink-0 md:shrink`}>
           
           <div className="flex-1 overflow-y-auto mb-4 pr-2">
-            <div className="flex items-center gap-2 mb-4">
+            <div className="flex flex-wrap items-center gap-2 mb-4">
               <span className="bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 text-xs px-2 py-1 rounded font-bold uppercase">{currentQuestion.domain}</span>
               <span className="bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-xs px-2 py-1 rounded font-bold">{currentQuestion.difficulty || 'Medium'}</span>
               <span className="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 text-xs px-2 py-1 rounded font-bold">{currentQuestion.type}</span>
             </div>
             
-            <h2 className="text-xl font-bold mt-2 mb-6 text-gray-900 dark:text-white">
+            <h2 className="text-lg md:text-xl font-bold mt-2 mb-6 text-gray-900 dark:text-white">
               Q{currentQuestionIndex + 1}. {currentQuestion.questionText}
             </h2>
 
@@ -302,16 +302,16 @@ export default function TestScreen({ params }) {
             {currentQuestion.type === 'MCQ' && (
               <div className="space-y-3 mt-6">
                 {currentQuestion.options?.map((opt, idx) => (
-                  <label key={idx} className="flex items-center gap-3 p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-colors bg-white dark:bg-gray-800/50">
+                  <label key={idx} className="flex items-center gap-3 p-3 md:p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-colors bg-white dark:bg-gray-800/50">
                     <input 
                       type="radio" 
                       name={`question-${currentQuestionIndex}`}
                       value={opt}
                       checked={answers[currentQuestionIndex] === opt}
                       onChange={() => handleAnswerChange(opt)}
-                      className="w-5 h-5 text-blue-600"
+                      className="w-4 h-4 md:w-5 md:h-5 text-blue-600 shrink-0"
                     />
-                    <span className="text-gray-800 dark:text-gray-200 font-medium">{opt}</span>
+                    <span className="text-sm md:text-base text-gray-800 dark:text-gray-200 font-medium">{opt}</span>
                   </label>
                 ))}
               </div>
@@ -336,17 +336,17 @@ export default function TestScreen({ params }) {
             <button 
               disabled={currentQuestionIndex === 0}
               onClick={() => setCurrentQuestionIndex(prev => prev - 1)}
-              className="px-6 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white rounded disabled:opacity-50 font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+              className="px-4 py-2 md:px-6 md:py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white rounded disabled:opacity-50 text-sm md:text-base font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
             >
               Previous
             </button>
-            <span className="text-sm font-bold text-gray-500 dark:text-gray-400">
+            <span className="text-xs md:text-sm font-bold text-gray-500 dark:text-gray-400">
               {currentQuestionIndex + 1} / {testData.questions.length}
             </span>
             <button 
               disabled={currentQuestionIndex === testData.questions.length - 1}
               onClick={() => setCurrentQuestionIndex(prev => prev + 1)}
-              className="px-6 py-2 bg-blue-600 text-white rounded disabled:opacity-50 font-medium hover:bg-blue-700 transition-colors"
+              className="px-4 py-2 md:px-6 md:py-2 bg-blue-600 text-white rounded disabled:opacity-50 text-sm md:text-base font-medium hover:bg-blue-700 transition-colors"
             >
               Next Question
             </button>
@@ -355,10 +355,10 @@ export default function TestScreen({ params }) {
 
         {/* Right pane: Code Editor (Only show for CODE type) */}
         {currentQuestion.type === 'CODE' ? (
-          <div className="w-1/2 h-full bg-gray-50 dark:bg-gray-900 flex flex-col">
+          <div className="w-full md:w-1/2 flex-1 md:h-full bg-gray-50 dark:bg-gray-900 flex flex-col min-h-0">
             <div className="p-2 bg-gray-100 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center shrink-0">
               <select 
-                className="text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-3 py-1.5 outline-none focus:ring-1 focus:ring-blue-500"
+                className="text-xs md:text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-2 md:px-3 py-1 md:py-1.5 outline-none focus:ring-1 focus:ring-blue-500"
                 value={language}
                 onChange={(e) => setLanguage(e.target.value)}
               >
@@ -370,12 +370,12 @@ export default function TestScreen({ params }) {
               <button 
                 onClick={handleRunCode}
                 disabled={isExecuting}
-                className="bg-green-600 text-white px-6 py-1.5 text-sm font-bold rounded hover:bg-green-700 disabled:bg-gray-400 dark:disabled:bg-gray-600 transition-colors"
+                className="bg-green-600 text-white px-3 py-1 md:px-6 md:py-1.5 text-xs md:text-sm font-bold rounded hover:bg-green-700 disabled:bg-gray-400 dark:disabled:bg-gray-600 transition-colors"
               >
                 {isExecuting ? "Running..." : "Run Code"}
               </button>
             </div>
-            <div className="flex-1 min-h-0">
+            <div className="flex-1 min-h-[200px] md:min-h-0 relative">
               <Editor
                 height="100%"
                 language={language === "cpp" ? "cpp" : language}
@@ -387,17 +387,17 @@ export default function TestScreen({ params }) {
             </div>
             
             {/* Output Terminal */}
-            <div className="h-48 bg-gray-900 shrink-0 border-t-4 border-gray-800 flex flex-col z-10">
+            <div className="h-32 md:h-48 bg-gray-900 shrink-0 border-t-4 border-gray-800 flex flex-col z-10">
               <div className="px-4 py-1 bg-gray-800 text-gray-300 text-xs font-mono tracking-widest shrink-0">
                 TERMINAL
               </div>
-              <div className="flex-1 p-4 overflow-y-auto font-mono text-sm text-green-400 whitespace-pre-wrap">
+              <div className="flex-1 p-2 md:p-4 overflow-y-auto font-mono text-xs md:text-sm text-green-400 whitespace-pre-wrap">
                 {output || "Output will appear here..."}
               </div>
             </div>
           </div>
         ) : (
-          <div className="w-1/2 h-full bg-gray-50 dark:bg-gray-800/50 flex flex-col items-center justify-center text-gray-400 dark:text-gray-500 p-8 text-center border-l border-gray-200 dark:border-gray-700">
+          <div className="hidden md:flex w-full md:w-1/2 h-full bg-gray-50 dark:bg-gray-800/50 flex-col items-center justify-center text-gray-400 dark:text-gray-500 p-8 text-center border-l border-gray-200 dark:border-gray-700">
             <svg className="w-20 h-20 mb-4 text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
             <p className="text-xl font-medium text-gray-500 dark:text-gray-400">Multiple Choice Question</p>
             <p className="text-sm mt-2">Select your answer from the options provided on the left.</p>

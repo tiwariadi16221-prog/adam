@@ -108,7 +108,7 @@ export default function Register() {
         </div>
 
         <button 
-          onClick={() => signIn("google")}
+          onClick={() => signIn("google", { callbackUrl: "/" })}
           className="w-full mt-6 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 font-bold py-2 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors flex items-center justify-center gap-2"
         >
           Sign up with Google

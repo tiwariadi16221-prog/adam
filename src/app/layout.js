@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "SDE Prep Platform",
+  title: "Monkey-Wants-Job",
   description: "AI Generated tests for SDE preparation",
 };
 

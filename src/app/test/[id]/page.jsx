@@ -3,6 +3,75 @@ import { useEffect, useState, useRef, use } from "react";
 import Editor from "@monaco-editor/react";
 import { useRouter } from "next/navigation";
 
+const BOILERPLATES = {
+  javascript: `// JavaScript (Node.js) Standard I/O Template
+const fs = require('fs');
+
+function main() {
+    // Read all input from standard input
+    const input = fs.readFileSync(0, 'utf-8').trim().split('\\n');
+    if (!input.length || input[0] === '') return;
+    
+    // Parse input (Example: first line)
+    // const firstLine = input[0];
+    
+    // Write your code here
+    
+}
+
+main();
+`,
+  cpp: `// C++ Standard I/O Template
+#include <iostream>
+#include <vector>
+#include <string>
+
+using namespace std;
+
+int main() {
+    // Read all input from standard input
+    // Example: int n; cin >> n;
+    
+    // Write your code here
+    
+    return 0;
+}
+`,
+  python: `# Python Standard I/O Template
+import sys
+
+def main():
+    # Read all input from standard input
+    input_data = sys.stdin.read().strip().split('\\n')
+    if not input_data or input_data[0] == '': return
+    
+    # Parse input (Example: first line)
+    # first_line = input_data[0]
+    
+    # Write your code here
+    pass
+
+if __name__ == '__main__':
+    main()
+`,
+  java: `// Java Standard I/O Template
+import java.util.Scanner;
+
+public class Solution {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        
+        // Read all input from standard input
+        // Example: if (scanner.hasNextInt()) { int n = scanner.nextInt(); }
+        
+        // Write your code here
+        
+        scanner.close();
+    }
+}
+`
+};
+
 export default function TestScreen({ params }) {
   const unwrappedParams = use(params);
   const testId = unwrappedParams.id;
@@ -28,6 +97,21 @@ export default function TestScreen({ params }) {
   const [output, setOutput] = useState("");
   const [isExecuting, setIsExecuting] = useState(false);
 
+  // Auto-switch boilerplate if unchanged
+  useEffect(() => {
+    if (!testData || testData.questions[currentQuestionIndex]?.type !== 'CODE') return;
+    
+    const currentAnswer = answers[currentQuestionIndex] || "";
+    const isUnchangedTemplate = Object.values(BOILERPLATES).includes(currentAnswer) || currentAnswer === "";
+    
+    if (isUnchangedTemplate) {
+      setAnswers(prev => ({
+        ...prev,
+        [currentQuestionIndex]: BOILERPLATES[language]
+      }));
+    }
+  }, [language, currentQuestionIndex, testData]);
+
   // Fetch test data on mount
   useEffect(() => {
     const fetchTest = async () => {
@@ -41,7 +125,7 @@ export default function TestScreen({ params }) {
           const initialAnswers = {};
           data.test.questions.forEach((q, idx) => {
             if (q.type === 'CODE') {
-              initialAnswers[idx] = `// Write your ${q.domain} code here...`;
+              initialAnswers[idx] = BOILERPLATES['javascript'];
             }
           });
           setAnswers(initialAnswers);
@@ -252,16 +336,24 @@ export default function TestScreen({ params }) {
 
   if (!isFullscreen) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[80vh]">
-        <h1 className="text-2xl font-bold mb-4">SDE Evaluation Test</h1>
-        <p className="text-gray-600 mb-2">Total Questions: {testData.questions.length}</p>
-        <p className="text-gray-600 mb-6">Duration: 1 Hour. Do not switch tabs or exit fullscreen.</p>
-        <button 
-          onClick={toggleFullscreen}
-          className="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700"
-        >
-          Start Test (Enter Fullscreen)
-        </button>
+      <div className="absolute inset-0 pt-20 flex flex-col items-center justify-center bg-[#faf9f6] z-0 px-4 text-center">
+        <div className="bg-white p-8 md:p-12 rounded-3xl shadow-xl border border-gray-200 max-w-lg w-full flex flex-col items-center">
+          <div className="inline-block px-3 py-1.5 bg-orange-100 rounded-xl text-orange-600 font-bold border border-orange-200 shadow-sm text-xs md:text-sm mb-6">
+            🐒 Ready to begin?
+          </div>
+          <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-2">
+            SDE Evaluation <span className="text-orange-500">Test</span>
+          </h1>
+          <p className="text-gray-600 font-medium mb-1">Total Questions: {testData.questions.length}</p>
+          <p className="text-gray-500 text-sm mb-8">Duration: 1 Hour. Do not switch tabs or exit fullscreen.</p>
+          
+          <button 
+            onClick={toggleFullscreen}
+            className="w-full max-w-sm bg-orange-500 text-white px-6 py-4 rounded-2xl font-black text-base md:text-lg hover:bg-orange-600 shadow-[0_6px_0_rgb(194,65,12)] hover:shadow-[0_3px_0_rgb(194,65,12)] hover:translate-y-[3px] transition-all transform flex justify-center items-center gap-3"
+          >
+            Start Test (Enter Fullscreen)
+          </button>
+        </div>
       </div>
     );
   }
@@ -294,7 +386,7 @@ export default function TestScreen({ params }) {
               <span className="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 text-xs px-2 py-1 rounded font-bold">{currentQuestion.type}</span>
             </div>
             
-            <h2 className="text-lg md:text-xl font-bold mt-2 mb-6 text-gray-900 dark:text-white">
+            <h2 className="text-lg md:text-xl font-bold mt-2 mb-6 text-gray-900 dark:text-white whitespace-pre-wrap">
               Q{currentQuestionIndex + 1}. {currentQuestion.questionText}
             </h2>
 
@@ -323,8 +415,14 @@ export default function TestScreen({ params }) {
                 <h3 className="font-bold text-gray-900 dark:text-white">Example Test Cases:</h3>
                 {currentQuestion.testCases.map((tc, idx) => (
                   <div key={idx} className="bg-gray-50 dark:bg-gray-800 p-4 rounded-md font-mono text-sm border border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-300">
-                    <strong className="text-gray-900 dark:text-gray-100">Input:</strong> {tc.input} <br/>
-                    <strong className="text-gray-900 dark:text-gray-100">Output:</strong> {tc.expectedOutput}
+                    <strong className="text-gray-900 dark:text-gray-100">Input:</strong>
+                    <div className="whitespace-pre-wrap mt-1 mb-3 bg-white dark:bg-gray-900 p-2 border border-gray-300 dark:border-gray-600 rounded">
+                      {tc.input}
+                    </div>
+                    <strong className="text-gray-900 dark:text-gray-100">Output:</strong>
+                    <div className="whitespace-pre-wrap mt-1 bg-white dark:bg-gray-900 p-2 border border-gray-300 dark:border-gray-600 rounded">
+                      {tc.expectedOutput}
+                    </div>
                   </div>
                 ))}
               </div>
